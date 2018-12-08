@@ -24,8 +24,8 @@ DROP TABLE IF EXISTS `exercise`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `exercise` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -48,9 +48,9 @@ DROP TABLE IF EXISTS `solution`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `solution` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `created` datetime DEFAULT NULL,
-  `updated` datetime DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `created` datetime NOT NULL,
+  `updated` datetime NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `exercise_id` int(11) NOT NULL,
   `users_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
@@ -79,7 +79,7 @@ DROP TABLE IF EXISTS `user_group`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -102,13 +102,13 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `password` varchar(245) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_group_id` int(11) DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(245) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_group_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
-  KEY `user_group_id` (`user_group_id`),
+  KEY `users_ibfk_1` (`user_group_id`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`user_group_id`) REFERENCES `user_group` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -131,4 +131,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-06 23:16:34
+-- Dump completed on 2018-12-08 12:53:15
