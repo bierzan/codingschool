@@ -156,6 +156,7 @@ public class User {
                 for (int i = 0; i < groups.length; i++) {
                     if (groups[i].getId() == groupId){
                         loadedUser.group = groups[i];
+                        break;
                     }
                 }
             }
