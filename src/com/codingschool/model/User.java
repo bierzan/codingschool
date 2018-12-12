@@ -1,10 +1,9 @@
 package com.codingschool.model;
 
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.codingschool.db.DatabaseConnection;
+
+import java.sql.*;
 import java.util.ArrayList;
 
 public class User {
@@ -25,7 +24,18 @@ public class User {
         this.username = username;
         this.email = email;
         this.setPassword(password);
+    }
 
+    public User(String username, String password, String email, int groupId) {
+        this.username = username;
+        this.email = email;
+        this.setPassword(password);
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            this.group = UserGroup.loadById(conn, groupId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setPassword(String password) {
@@ -33,14 +43,30 @@ public class User {
     }
 
     public void save(Connection conn) throws SQLException {
+
         if (this.id == 0) {
-            String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-            String[] generatedColumns = {"id"};
-            PreparedStatement prepStm = conn.prepareStatement(sql, generatedColumns);
-            prepStm.setString(1, this.username);
-            prepStm.setString(2, this.password);
-            prepStm.setString(3, this.email);
-            prepStm.executeUpdate();
+            PreparedStatement prepStm;
+            try {
+                String sql = "INSERT INTO users (username, password, email, user_group_id) VALUES (?, ?, ?,?)";
+                String[] generatedColumns = {"id"};
+                prepStm = conn.prepareStatement(sql, generatedColumns);
+                prepStm.setString(1, this.username);
+                prepStm.setString(2, this.password);
+                prepStm.setString(3, this.email);
+                prepStm.setInt(4, this.group.getId());
+                prepStm.executeUpdate();
+            } catch (NullPointerException e) { //kiedy nie ma przypisanej grupy
+
+                String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+                String[] generatedColumns = {"id"};
+                prepStm = conn.prepareStatement(sql, generatedColumns);
+                prepStm.setString(1, this.username);
+                prepStm.setString(2, this.password);
+                prepStm.setString(3, this.email);
+                prepStm.executeUpdate();
+
+            }
+
             ResultSet rs = prepStm.getGeneratedKeys();
 
             if (rs.next()) {
@@ -49,17 +75,31 @@ public class User {
         } else {
             update(conn);
         }
+
     }
 
     public void update(Connection conn) throws SQLException {
         if (this.id > 0) {
-            String sql = "UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?";
-            PreparedStatement prepStm = conn.prepareStatement(sql);
-            prepStm.setString(1, this.username);
-            prepStm.setString(2, this.password);
-            prepStm.setString(3, this.email);
-            prepStm.setInt(4, this.id);
-            prepStm.executeUpdate();
+            PreparedStatement prepStm;
+            try {
+                String sql = "UPDATE users SET username = ?, password = ?, email = ?, user_group_id = ? WHERE id = ?";
+                prepStm = conn.prepareStatement(sql);
+                prepStm.setString(1, this.username);
+                prepStm.setString(2, this.password);
+                prepStm.setString(3, this.email);
+                prepStm.setInt(4, this.group.getId());
+                prepStm.setInt(5, this.id);
+                prepStm.executeUpdate();
+            } catch (NullPointerException e) {
+                String sql = "UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?";
+                prepStm = conn.prepareStatement(sql);
+                prepStm.setString(1, this.username);
+                prepStm.setString(2, this.password);
+                prepStm.setString(3, this.email);
+                prepStm.setInt(4, this.id);
+                prepStm.executeUpdate();
+            }
+
         } else {
             System.out.println("Taki użytkownik nie istnieje w baze danych.");
         }
@@ -87,13 +127,19 @@ public class User {
             loadedUser.username = rs.getString("username");
             loadedUser.password = rs.getString("password");
             loadedUser.email = rs.getString("email");
-            //todo dodac tworzenie instancji grupy (lub przypisaywanie instancji już stworzonej)
+            int groupId = rs.getInt("user_group_id");
+            if (groupId > 0) {
+                loadedUser.group = UserGroup.loadById(conn, groupId);
+            }
             return loadedUser;
         }
         return null;
     }
 
     public static User[] loadAll(Connection conn) throws SQLException {
+
+        UserGroup[] groups = UserGroup.loadAll(conn);
+
         ArrayList<User> users = new ArrayList<User>();
         String sql = "SELECT * FROM users";
         PreparedStatement prepStm = conn.prepareStatement(sql);
@@ -104,7 +150,15 @@ public class User {
             loadedUser.username = rs.getString("username");
             loadedUser.password = rs.getString("password");
             loadedUser.email = rs.getString("email");
-            //todo - dodac wpisywanie grup
+            int groupId = rs.getInt("user_group_id");
+            if (groupId > 0) {
+
+                for (int i = 0; i < groups.length; i++) {
+                    if (groups[i].getId() == groupId){
+                        loadedUser.group = groups[i];
+                    }
+                }
+            }
             users.add(loadedUser);
         }
         User[] uArray = new User[users.size()];
@@ -113,10 +167,7 @@ public class User {
     }
 
 
-    //TODO sprawdzenie czy mail sie nie powtarza (setter na mailu?)
-
-    //TODO save() dodawanie usergroupid
-
+    //TODO sprawdzenie czy mail sie nie powtarza (setter na mailu?) - czy sprawdza to sql?
 
     public String getUsername() {
         return username;
@@ -144,5 +195,18 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setGroup(int groupId){
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            this.group = UserGroup.loadById(conn, groupId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setGroup(UserGroup group){
+        this.group = group;
     }
 }
