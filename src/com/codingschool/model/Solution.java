@@ -77,12 +77,15 @@ public class Solution {
 
     public void save(Connection conn) throws SQLException {
         if (this.id == 0) {
-            String sql = "INSERT INTO solution (created, updated, description) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO solution (created, updated, description, exercise_id, user_id) " +
+                    "VALUES (?, ?, ?,?,?)";
             String[] generatedColumns = {"id"};
             PreparedStatement prepStm = conn.prepareStatement(sql, generatedColumns);
             prepStm.setString(1, this.created);
             prepStm.setString(2, this.updated);
             prepStm.setString(3, this.description);
+            prepStm.setInt(4,this.exercise.getId());
+            prepStm.setInt(5, this.user.getId());
             prepStm.executeUpdate();
             ResultSet rs = prepStm.getGeneratedKeys();
 
@@ -96,11 +99,13 @@ public class Solution {
 
     public void update(Connection conn) throws SQLException {
         if (this.id > 0) {
-            String sql = "UPDATE solution SET updated = ?, description = ? WHERE id = ?";
+            String sql = "UPDATE solution SET updated = ?, description = ?, exercise_id = ?, user_id = ? WHERE id = ?";
             PreparedStatement prepStm = conn.prepareStatement(sql);
             prepStm.setString(1, dateNow());
             prepStm.setString(2, this.description);
-            prepStm.setInt(3, this.id);
+            prepStm.setInt(3,this.exercise.getId());
+            prepStm.setInt(4, this.user.getId());
+            prepStm.setInt(5, this.id);
             prepStm.executeUpdate();
         } else {
             System.out.println("Takie rozwiązanie nie istnieje w baze danych.");
@@ -129,12 +134,24 @@ public class Solution {
             loadedSolution.created = rs.getString("created");
             loadedSolution.updated = rs.getString("updated");
             loadedSolution.description = rs.getString("description");
+            int exerciseId = rs.getInt("exercise_id");
+            int userId = rs.getInt("user_id");
+            if (exerciseId>0){
+                loadedSolution.exercise = Exercise.loadById(conn,exerciseId);
+            }
+            if (userId>0){
+                loadedSolution.user = User.loadById(conn, userId);
+            }
             return loadedSolution;
         }
         return null;
     }
 
     public static Solution[] loadAll(Connection conn) throws SQLException {
+
+        User[] users = User.loadAll(conn);
+        Exercise[] exercises = Exercise.loadAll(conn);
+
         ArrayList<Solution> solutions = new ArrayList<Solution>();
         String sql = "SELECT * FROM solution";
         PreparedStatement prepStm = conn.prepareStatement(sql);
@@ -145,6 +162,26 @@ public class Solution {
             loadedSolution.created = rs.getString("created");
             loadedSolution.updated = rs.getString("updated");
             loadedSolution.description = rs.getString("description");
+            int exId = rs.getInt("exercise_id");
+            int userId = rs.getInt("user_id");
+
+            if (exId > 0) {
+                for(int i = 0; i < exercises.length; i++){
+                    if (exercises[i].getId() == exId){
+                        loadedSolution.exercise = exercises[i];
+                        break;
+                    }
+                }
+            }
+
+            if (userId > 0) {
+                for(int i = 0; i < users.length; i++){
+                    if (users[i].getId() == userId){
+                        loadedSolution.user = users[i];
+                        break;
+                    }
+                }
+            }
 
             solutions.add(loadedSolution);
         }
