@@ -154,12 +154,36 @@ public class User {
             if (groupId > 0) {
 
                 for (int i = 0; i < groups.length; i++) {
-                    if (groups[i].getId() == groupId){
+                    if (groups[i].getId() == groupId) {
                         loadedUser.group = groups[i];
                         break;
                     }
                 }
             }
+            users.add(loadedUser);
+        }
+        User[] uArray = new User[users.size()];
+        uArray = users.toArray(uArray);
+        return uArray;
+    }
+
+    public static User[] loadAllByGroupId(Connection conn, int groupId) throws SQLException {
+
+        UserGroup group = UserGroup.loadById(conn, groupId);
+
+        ArrayList<User> users = new ArrayList<User>();
+        String sql = "SELECT * FROM users WHERE user_group_id = ?";
+        PreparedStatement prepStm = conn.prepareStatement(sql);
+        prepStm.setInt(1, groupId);
+        ResultSet rs = prepStm.executeQuery();
+        while (rs.next()) {
+            User loadedUser = new User();
+            loadedUser.id = rs.getInt("id");
+            loadedUser.username = rs.getString("username");
+            loadedUser.password = rs.getString("password");
+            loadedUser.email = rs.getString("email");
+            loadedUser.group = group;
+
             users.add(loadedUser);
         }
         User[] uArray = new User[users.size()];
@@ -198,7 +222,7 @@ public class User {
         this.email = email;
     }
 
-    public void setGroup(int groupId){
+    public void setGroup(int groupId) {
         try {
             Connection conn = DatabaseConnection.getConnection();
             this.group = UserGroup.loadById(conn, groupId);
@@ -207,7 +231,7 @@ public class User {
         }
     }
 
-    public void setGroup(UserGroup group){
+    public void setGroup(UserGroup group) {
         this.group = group;
     }
 }
