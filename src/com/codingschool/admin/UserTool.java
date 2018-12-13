@@ -5,7 +5,6 @@ import com.codingschool.model.User;
 import com.codingschool.model.UserGroup;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserTool {
@@ -20,8 +19,12 @@ public class UserTool {
                     addUser(conn);
                 } else if (task.equalsIgnoreCase("edit")){
                     editUser(conn);
+                } else if (task.equalsIgnoreCase("delete")){
+                    deleteUser(conn);
                 }
             }
+
+            System.out.println("\nKończenie programu");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,7 +61,7 @@ public class UserTool {
                     "\n - add - dodanie użytkownika," +
                     "\n - edit - edycja użytkownka," +
                     "\n - delete - usunięcie użytkownika," +
-                    "\n - quit - zakońćzenie programu.");
+                    "\n - quit - zakończenie programu.");
             task = sc.next();
         }
 
@@ -247,6 +250,21 @@ public class UserTool {
 
     }
 
+    private static void deleteUser(Connection conn) {
+        int userId = 0;
+
+        System.out.println("Podaj id użytkownika, którego chcesz usunąć.");
+        userId = getIntFromScanner();
+
+        try {
+            User.loadById(conn, userId).delete(conn);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        System.out.println("Użytkownik został usunięty\n");
+
+    }
+
     private static boolean doesEmailExist(Connection conn, String email) throws SQLException {
 
         String sql = "SELECT * FROM users WHERE email = ? ;";
@@ -259,7 +277,6 @@ public class UserTool {
             return false;
         }
     }
-
 
     private static boolean doesGroupExist(Connection conn, int groupId) throws SQLException {
 
