@@ -27,7 +27,7 @@ CREATE TABLE `exercise` (
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,6 +36,7 @@ CREATE TABLE `exercise` (
 
 LOCK TABLES `exercise` WRITE;
 /*!40000 ALTER TABLE `exercise` DISABLE KEYS */;
+INSERT INTO `exercise` VALUES (1,'zadanie 1','bardzo trudne zadanie'),(2,'małpia robota','wklepać wpizdu wpisów do bazy danych'),(3,'misja','skocz ojcu po fajki i piwo');
 /*!40000 ALTER TABLE `exercise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -51,14 +52,14 @@ CREATE TABLE `solution` (
   `created` datetime NOT NULL,
   `updated` datetime NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exercise_id` int(11) NOT NULL,
-  `users_id` bigint(20) NOT NULL,
+  `exercise_id` int(11) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `exercise_id` (`exercise_id`),
-  KEY `users_id` (`users_id`),
+  KEY `solution_ibfk_1` (`exercise_id`),
+  KEY `solution_ibfk_2` (`user_id`),
   CONSTRAINT `solution_ibfk_1` FOREIGN KEY (`exercise_id`) REFERENCES `exercise` (`id`),
-  CONSTRAINT `solution_ibfk_2` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `solution_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,6 +68,7 @@ CREATE TABLE `solution` (
 
 LOCK TABLES `solution` WRITE;
 /*!40000 ALTER TABLE `solution` DISABLE KEYS */;
+INSERT INTO `solution` VALUES (1,'2018-12-10 22:53:41','2018-12-10 22:59:35','to robota dla druzyny a',NULL,NULL),(2,'2018-12-10 22:56:23','2018-12-10 22:56:23','dzwon po szwagra',1,NULL);
 /*!40000 ALTER TABLE `solution` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +83,7 @@ CREATE TABLE `user_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,6 +92,7 @@ CREATE TABLE `user_group` (
 
 LOCK TABLES `user_group` WRITE;
 /*!40000 ALTER TABLE `user_group` DISABLE KEYS */;
+INSERT INTO `user_group` VALUES (2,'bordowa'),(3,'elfy'),(4,'sayians'),(5,'cyborgs'),(6,'nameks'),(7,'humans');
 /*!40000 ALTER TABLE `user_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -105,12 +108,12 @@ CREATE TABLE `users` (
   `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(245) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_group_id` int(11) NOT NULL,
+  `user_group_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   KEY `users_ibfk_1` (`user_group_id`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`user_group_id`) REFERENCES `user_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,6 +122,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'bolo','nie@chcem.ale','$2a$10$wG1ENn5GTmxJgZTa/TjLv..xqMnKXd9/3cl.8k1yqjxx5KaIl369O',NULL),(3,'bulterier','bult@tvp.pis','$2a$10$lIR2udlEaA6zyzwsMZIYU.DiTbAVUTaTJ8qf8VHDvC3QYhJp1pBSK',2),(7,'adrian','wszystko@podpisze.pl','$2a$10$TDDGNIPaeCqHX20Wv5pvZOl0jyQMfmFESjznOuBv8VVKX9xZEx5uy',2),(8,'krillin','no@nose.com','$2a$10$yOiaCChGOWhesoaOYZrBROJtWOjHoYrxwfK.PJfs/cKbwWJtAQMQ6',7),(9,'goku','more@food.plis','$2a$10$bofHqv.kqkIIHIrJX4aZu.DLN5S8IVMLkruZvb6QUgxXsIau6hZH2',4),(10,'piccolo','cloud@palace.com','$2a$10$2SxeNTmyELrfLAv19BVEkuTtRka0O0pkt2ak62x63rx4nQNMYA.X6',6);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -131,4 +135,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-08 12:53:15
+-- Dump completed on 2018-12-13 23:15:32

@@ -12,7 +12,7 @@ public class Solution {
 
     private int id = 0;
     private String created = dateNow();
-    private String updated = dateNow();
+    private String updated;
     private String description;
     private Exercise exercise;
     private User user;
