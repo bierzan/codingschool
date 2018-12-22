@@ -20,12 +20,12 @@ public class Solution {
     public Solution() {
     }
 
-    public Solution (String description) {
+    public Solution(String description) {
         this.description = description;
 
     } //todo dodac tworzenie relacji do exercise i user
 
-    private String dateNow(){
+    private String dateNow() {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date);
@@ -84,7 +84,7 @@ public class Solution {
             prepStm.setString(1, this.created);
             prepStm.setString(2, this.updated);
             prepStm.setString(3, this.description);
-            prepStm.setInt(4,this.exercise.getId());
+            prepStm.setInt(4, this.exercise.getId());
             prepStm.setInt(5, this.user.getId());
             prepStm.executeUpdate();
             ResultSet rs = prepStm.getGeneratedKeys();
@@ -103,7 +103,7 @@ public class Solution {
             PreparedStatement prepStm = conn.prepareStatement(sql);
             prepStm.setString(1, dateNow());
             prepStm.setString(2, this.description);
-            prepStm.setInt(3,this.exercise.getId());
+            prepStm.setInt(3, this.exercise.getId());
             prepStm.setInt(4, this.user.getId());
             prepStm.setInt(5, this.id);
             prepStm.executeUpdate();
@@ -136,10 +136,10 @@ public class Solution {
             loadedSolution.description = rs.getString("description");
             int exerciseId = rs.getInt("exercise_id");
             int userId = rs.getInt("user_id");
-            if (exerciseId>0){
-                loadedSolution.exercise = Exercise.loadById(conn,exerciseId);
+            if (exerciseId > 0) {
+                loadedSolution.exercise = Exercise.loadById(conn, exerciseId);
             }
-            if (userId>0){
+            if (userId > 0) {
                 loadedSolution.user = User.loadById(conn, userId);
             }
             return loadedSolution;
@@ -166,8 +166,8 @@ public class Solution {
             int userId = rs.getInt("user_id");
 
             if (exId > 0) {
-                for(int i = 0; i < exercises.length; i++){
-                    if (exercises[i].getId() == exId){
+                for (int i = 0; i < exercises.length; i++) {
+                    if (exercises[i].getId() == exId) {
                         loadedSolution.exercise = exercises[i];
                         break;
                     }
@@ -175,8 +175,8 @@ public class Solution {
             }
 
             if (userId > 0) {
-                for(int i = 0; i < users.length; i++){
-                    if (users[i].getId() == userId){
+                for (int i = 0; i < users.length; i++) {
+                    if (users[i].getId() == userId) {
                         loadedSolution.user = users[i];
                         break;
                     }
@@ -209,8 +209,8 @@ public class Solution {
             int exId = rs.getInt("exercise_id");
 
             if (exId > 0) {
-                for(int i = 0; i < exercises.length; i++){
-                    if (exercises[i].getId() == exId){
+                for (int i = 0; i < exercises.length; i++) {
+                    if (exercises[i].getId() == exId) {
                         loadedSolution.exercise = exercises[i];
                         break;
                     }
@@ -245,8 +245,8 @@ public class Solution {
             int userId = rs.getInt("user_id");
 
             if (userId > 0) {
-                for(int i = 0; i < users.length; i++){
-                    if (users[i].getId() == userId){
+                for (int i = 0; i < users.length; i++) {
+                    if (users[i].getId() == userId) {
                         loadedSolution.user = users[i];
                         break;
                     }

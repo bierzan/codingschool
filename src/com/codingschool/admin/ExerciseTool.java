@@ -25,7 +25,7 @@ public class ExerciseTool {
                 }
             }
 
-            System.out.println("\nKończenie programu");
+            System.out.println("\nPowrót do panelu administratora");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,7 +126,7 @@ public class ExerciseTool {
 
         try {
             Exercise.loadById(conn, exId).delete(conn);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         System.out.println("Zadanie zostało usunięte\n");

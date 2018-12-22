@@ -24,7 +24,7 @@ public class SolutionTool {
                 }
             }
 
-            System.out.println("\nKończenie programu");
+            System.out.println("\nPowrót do panelu administratora");
 
         } catch (SQLException e) {
             e.printStackTrace();

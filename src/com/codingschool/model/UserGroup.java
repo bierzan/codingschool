@@ -14,7 +14,7 @@ public class UserGroup {
     public UserGroup() {
     }
 
-    public UserGroup (String name){
+    public UserGroup(String name) {
         this.name = name;
     }
 

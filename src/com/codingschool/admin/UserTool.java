@@ -17,14 +17,14 @@ public class UserTool {
                 task = printAndGetTask(conn);
                 if (task.equalsIgnoreCase("add")) {
                     addUser(conn);
-                } else if (task.equalsIgnoreCase("edit")){
+                } else if (task.equalsIgnoreCase("edit")) {
                     editUser(conn);
-                } else if (task.equalsIgnoreCase("delete")){
+                } else if (task.equalsIgnoreCase("delete")) {
                     deleteUser(conn);
                 }
             }
 
-            System.out.println("\nKończenie programu");
+            System.out.println("\nPowrót do panelu administratora");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -258,7 +258,7 @@ public class UserTool {
 
         try {
             User.loadById(conn, userId).delete(conn);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         System.out.println("Użytkownik został usunięty\n");

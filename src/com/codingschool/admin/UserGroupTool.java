@@ -3,7 +3,6 @@ package com.codingschool.admin;
 import com.codingschool.db.DatabaseConnection;
 import com.codingschool.model.UserGroup;
 
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +25,7 @@ public class UserGroupTool {
                 }
             }
 
-            System.out.println("\nKończenie programu");
+            System.out.println("\nPowrót do panelu administratora");
 
         } catch (SQLException e) {
             e.printStackTrace();
